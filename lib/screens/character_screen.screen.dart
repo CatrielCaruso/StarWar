@@ -19,7 +19,6 @@ class _CharacterScreenState extends State<CharacterScreen> {
   late final StarWarsProvider providerWatch = context.watch<StarWarsProvider>();
   bool finishedFetch = false;
 
-  List<Future<void>> providerList = [];
   @override
   void initState() {
     _initFetch();
@@ -32,14 +31,19 @@ class _CharacterScreenState extends State<CharacterScreen> {
       setState(() {
         finishedFetch = false;
       });
+
+      /// Paths para traer los objetos de las naves del personaje.
       if (widget.person.hasStarShip) {
-        addPath(paths: widget.person.starships!);
+        await addPathsTransport(paths: widget.person.starships!);
       }
 
+      /// Paths para traer los objetos de los vehículos del personaje.
       if (widget.person.hasVehicles) {
-        addPath(paths: widget.person.vehicles!);
+        await addPathsTransport(paths: widget.person.vehicles!);
       }
-      await Future.wait(providerList);
+
+      /// Path para traer el planeta del personaje
+      await addPathHomeWord(pathHomeWorld: widget.person.homeworld!);
 
       /// En este punto creo el objeto con toda la
       /// información que necesito para mostrar en esta segunda pantalla
@@ -53,16 +57,18 @@ class _CharacterScreenState extends State<CharacterScreen> {
 
   /// Esta función arma todas las llamdas a la api
   /// para ser ejecutada en el siguiete paso del programa.
-  void addPath({required List<String> paths}) {
+  Future<void> addPathsTransport({required List<String> paths}) async {
     for (String path in paths) {
-      if (paths.contains('starships')) {
-        providerList.add(providerRead.getStarShip(pathStarShip: path));
+      if (path.contains('starships')) {
+        await providerRead.getStarShip(pathStarShip: path);
       } else {
-        providerList.add(
-          providerRead.getVehicle(pathVehicle: path),
-        );
+        await providerRead.getVehicle(pathVehicle: path);
       }
     }
+  }
+
+  Future<void> addPathHomeWord({required String pathHomeWorld}) async {
+    await providerRead.getHomeWorld(pathHomeWorld: pathHomeWorld);
   }
 
   @override
@@ -79,8 +85,11 @@ class _CharacterScreenState extends State<CharacterScreen> {
           centerTitle: true,
         ),
         body: (finishedFetch)
-            ? CharacterScreenDetails(
-                starWarsCharacter: providerWatch.starWarsCharacter!,
+            ? Padding(
+                padding: const EdgeInsets.all(24),
+                child: CharacterScreenDetails(
+                  starWarsCharacter: providerWatch.starWarsCharacter!,
+                ),
               )
             : const Center(child: CircularProgressIndicator()),
       ),
@@ -105,9 +114,159 @@ class CharacterScreenDetails extends StatelessWidget {
         color: CustomStylesTheme.gray100Color,
         border: Border.all(width: 1.5, color: CustomStylesTheme.gray200Color),
       ),
-      child: Row(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(starWarsCharacter.character!.name!),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text(
+                          'Color de piel: ',
+                          style: CustomStylesTheme.titleXS16_20_semibold,
+                        ),
+                        const SizedBox(
+                          height: 2,
+                        ),
+                        Text(
+                          '${starWarsCharacter.character!.skinColor}',
+                          style: CustomStylesTheme.titleXS16_20.copyWith(
+                              fontFamily: CustomStylesTheme.fontFamilyFranklin),
+                        ),
+                      ],
+                    ),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text(
+                          'Planeta: ',
+                          style: CustomStylesTheme.titleXS16_20_semibold,
+                        ),
+                        const SizedBox(
+                          height: 2,
+                        ),
+                        Text(
+                          '${starWarsCharacter.homeWorld!.name}',
+                          style: CustomStylesTheme.titleXS16_20.copyWith(
+                              fontFamily: CustomStylesTheme.fontFamilyFranklin),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text(
+                          'Color de ojo: ',
+                          style: CustomStylesTheme.titleXS16_20_semibold,
+                        ),
+                        const SizedBox(
+                          height: 2,
+                        ),
+                        Text(
+                          '${starWarsCharacter.character!.eyeColor}',
+                          style: CustomStylesTheme.titleXS16_20.copyWith(
+                              fontFamily: CustomStylesTheme.fontFamilyFranklin),
+                        ),
+                      ],
+                    ),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text(
+                          'Color de pelo: ',
+                          style: CustomStylesTheme.titleXS16_20_semibold,
+                        ),
+                        const SizedBox(
+                          height: 2,
+                        ),
+                        Text(
+                          '${starWarsCharacter.character!.hairColor}',
+                          style: CustomStylesTheme.titleXS16_20.copyWith(
+                              fontFamily: CustomStylesTheme.fontFamilyFranklin),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(
+            height: 10,
+          ),
+          const Divider(
+            height: 1.5,
+            color: CustomStylesTheme.primaryColor,
+          ),
+          const SizedBox(
+            height: 5,
+          ),
+          const Text(
+            'Vehículos: ',
+            style: CustomStylesTheme.titleXS16_20_semibold,
+          ),
+          const SizedBox(
+            height: 2,
+          ),
+          if (starWarsCharacter.vehicles!.isNotEmpty)
+            ...starWarsCharacter.vehicles!.map(
+              (item) => Text(
+                '- ${item.name}',
+                style: CustomStylesTheme.titleXS16_20
+                    .copyWith(fontFamily: CustomStylesTheme.fontFamilyFranklin),
+              ),
+            )
+          else
+            Text(
+              'Sin Vehículos',
+              style: CustomStylesTheme.titleXS16_20
+                  .copyWith(fontFamily: CustomStylesTheme.fontFamilyFranklin),
+            ),
+          const SizedBox(
+            height: 10,
+          ),
+          const Divider(
+            height: 1.5,
+            color: CustomStylesTheme.primaryColor,
+          ),
+          const SizedBox(
+            height: 5,
+          ),
+          const Text(
+            'Naves: ',
+            style: CustomStylesTheme.titleXS16_20_semibold,
+          ),
+          const SizedBox(
+            height: 2,
+          ),
+          if (starWarsCharacter.starShips!.isNotEmpty)
+            ...starWarsCharacter.starShips!.map(
+              (item) => Text(
+                '- ${item.name}',
+                style: CustomStylesTheme.titleXS16_20
+                    .copyWith(fontFamily: CustomStylesTheme.fontFamilyFranklin),
+              ),
+            )
+          else
+            Text(
+              'Sin naves',
+              style: CustomStylesTheme.titleXS16_20
+                  .copyWith(fontFamily: CustomStylesTheme.fontFamilyFranklin),
+            ),
         ],
       ),
     );

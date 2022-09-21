@@ -102,16 +102,20 @@ class _HomeScreenState extends State<HomeScreen> {
                           itemCount:
                               context.watch<StarWarsProvider>().persons.length,
                           itemBuilder: ((context, index) => GestureDetector(
-                                onTap: () => Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => CharacterScreen(
-                                      person: context
-                                          .watch<StarWarsProvider>()
-                                          .persons[index],
+                                onTap: () {
+                                  /// Limpiamos los array del estado
+                                  providerRead.clearArray();
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => CharacterScreen(
+                                        person: context
+                                            .watch<StarWarsProvider>()
+                                            .persons[index],
+                                      ),
                                     ),
-                                  ),
-                                ),
+                                  );
+                                },
                                 child: HomeScreenPersonItemWidget(
                                   person: context
                                       .watch<StarWarsProvider>()

@@ -17,10 +17,12 @@ class StarWarsProvider with ChangeNotifier, DioClient {
   PeopleModel? _people;
   List<PersonModel> _persons = [];
   List<PersonModel> _auxPersons = [];
+  // ignore: prefer_final_fields
   List<StarShipModel> _starShips = [];
+  // ignore: prefer_final_fields
   List<VehicleModel> _vehicles = [];
   StarWarsCharacter? _starWarsCharacter;
-
+  HomeWorldModel? _homeWorldModel;
   int _page = 1;
 
   /// Función para traer los pesonajes de starWars
@@ -83,6 +85,19 @@ class StarWarsProvider with ChangeNotifier, DioClient {
     }
   }
 
+  /// Función para traer los vehículos DE UN PERSONAJE DE STARWARS
+  Future<void> getHomeWorld({required String pathHomeWorld}) async {
+    try {
+      final Response<String> response = await dio.get(
+        pathHomeWorld,
+      );
+      homeWorldModel = HomeWorldModel.fromRawJson(response.toString());
+      notifyListeners();
+    } catch (e) {
+      rethrow;
+    }
+  }
+
   /// Esta función se utiliza para incremetar la
   /// página a la hora de hacer peticiones para traer a
   /// las personas. (Porque esta páginado)
@@ -101,9 +116,19 @@ class StarWarsProvider with ChangeNotifier, DioClient {
     return _people;
   }
 
+  void clearArray() {
+    _starShips = [];
+    _vehicles = [];
+    notifyListeners();
+  }
+
   void characterSelected({required PersonModel person}) {
     starWarsCharacter = StarWarsCharacter(
-        character: person, starShips: _starShips, vehicles: _vehicles);
+      character: person,
+      starShips: _starShips,
+      vehicles: _vehicles,
+      homeWorld: homeWorldModel,
+    );
     notifyListeners();
   }
 
@@ -113,6 +138,12 @@ class StarWarsProvider with ChangeNotifier, DioClient {
 
   set starWarsCharacter(StarWarsCharacter? value) {
     _starWarsCharacter = value;
+    notifyListeners();
+  }
+
+  HomeWorldModel? get homeWorldModel => _homeWorldModel;
+  set homeWorldModel(HomeWorldModel? value) {
+    _homeWorldModel = value;
     notifyListeners();
   }
 }
