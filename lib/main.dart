@@ -6,7 +6,6 @@ import 'package:star_wars/routes/routes.route.dart';
 import 'package:star_wars/themes/themes.themes.dart';
 import 'providers/star_wars.provider.dart';
 
-
 void main() => runApp(
       MultiProvider(
         providers: [
@@ -26,16 +25,6 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Material App',
-      home: Scaffold(
-        appBar: AppBar(
-          title: Text('Material App Bar'),
-        ),
-        body: Center(
-          child: Container(
-            child: Text('Hello World'),
-          ),
-        ),
-      ),
       routes: AppRoutes.routes,
       initialRoute: AppRoutes.initialRoute,
       theme: CustomStylesTheme.mainTheme,

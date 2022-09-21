@@ -4,7 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 
 import 'package:star_wars/providers/star_wars.provider.dart';
-import 'package:star_wars/screens/details_person_screen.screen.dart';
+import 'package:star_wars/screens/character_screen.screen.dart';
 import 'package:star_wars/themes/themes.themes.dart';
 import 'package:star_wars/widgets/widgets.dart';
 
@@ -22,6 +22,7 @@ class _HomeScreenState extends State<HomeScreen> {
   late final StarWarsProvider providerWatch = context.watch<StarWarsProvider>();
   late final RefreshController _refreshController =
       RefreshController(initialRefresh: false);
+  bool loading = false;
   @override
   void initState() {
     _initFetch();
@@ -32,7 +33,13 @@ class _HomeScreenState extends State<HomeScreen> {
   /// Función inicial para traer la información inicial.(Los primeros personajes).
   Future<void> _initFetch() async {
     try {
+      setState(() {
+        loading = true;
+      });
       await providerRead.getPeople();
+      setState(() {
+        loading = false;
+      });
     } catch (e) {}
   }
 
@@ -68,7 +75,7 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
           centerTitle: true,
         ),
-        body: (context.watch<StarWarsProvider>().finishedFetch)
+        body: (!loading)
             ? Padding(
                 padding: const EdgeInsets.only(
                     left: 24, right: 24, bottom: 24, top: 5),
@@ -78,10 +85,10 @@ class _HomeScreenState extends State<HomeScreen> {
                       child: SmartRefresher(
                         physics: const BouncingScrollPhysics(),
                         enablePullUp:
-                            (providerWatch.people.next != null) ? true : false,
+                            (providerWatch.people!.next != null) ? true : false,
                         enablePullDown: false,
                         controller: _refreshController,
-                        onLoading: (providerWatch.people.next != null)
+                        onLoading: (providerWatch.people!.next != null)
                             ? _onLoading
                             : null,
                         footer: const ClassicFooter(
@@ -98,7 +105,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                 onTap: () => Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                    builder: (context) => DetailsPersonScreen(
+                                    builder: (context) => CharacterScreen(
                                       person: context
                                           .watch<StarWarsProvider>()
                                           .persons[index],
