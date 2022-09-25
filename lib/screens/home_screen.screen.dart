@@ -1,4 +1,6 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_switch/flutter_switch.dart';
 
 import 'package:provider/provider.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
@@ -62,6 +64,8 @@ class _HomeScreenState extends State<HomeScreen> {
     super.dispose();
   }
 
+  bool status5 = false;
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -75,6 +79,7 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
           centerTitle: true,
         ),
+        drawer:const  DrawerWidget(),
         body: (!loading)
             ? Padding(
                 padding: const EdgeInsets.only(

@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 import 'package:star_wars/providers/star_wars.provider.dart';
 import 'package:star_wars/models/models.dart';
 import 'package:star_wars/themes/themes.themes.dart';
+import 'package:star_wars/widgets/widgets.dart';
 
 class CharacterScreen extends StatefulWidget {
   final PersonModel person;
@@ -75,6 +76,7 @@ class _CharacterScreenState extends State<CharacterScreen> {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
+        drawer: const DrawerWidget(),
         appBar: AppBar(
           elevation: 0,
           backgroundColor: CustomStylesTheme.blueLightColor,
@@ -83,191 +85,21 @@ class _CharacterScreenState extends State<CharacterScreen> {
             style: CustomStylesTheme.titleL24_28_semibold,
           ),
           centerTitle: true,
+          actions: [
+            IconButton(
+              icon: Icon(Icons.arrow_drop_down_circle_outlined),
+              onPressed: () => Navigator.pop(context),
+            )
+          ],
         ),
         body: (finishedFetch)
             ? Padding(
                 padding: const EdgeInsets.all(24),
-                child: CharacterScreenDetails(
+                child: CharacterScreenDetailsWidget(
                   starWarsCharacter: providerWatch.starWarsCharacter!,
                 ),
               )
             : const Center(child: CircularProgressIndicator()),
-      ),
-    );
-  }
-}
-
-class CharacterScreenDetails extends StatelessWidget {
-  final StarWarsCharacter starWarsCharacter;
-  const CharacterScreenDetails({
-    super.key,
-    required this.starWarsCharacter,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.all(24),
-      decoration: BoxDecoration(
-        borderRadius: const BorderRadius.all(Radius.circular(24)),
-        color: CustomStylesTheme.gray100Color,
-        border: Border.all(width: 1.5, color: CustomStylesTheme.gray200Color),
-      ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Text(
-                          'Color de piel: ',
-                          style: CustomStylesTheme.titleXS16_20_semibold,
-                        ),
-                        const SizedBox(
-                          height: 2,
-                        ),
-                        Text(
-                          '${starWarsCharacter.character!.skinColor}',
-                          style: CustomStylesTheme.titleXS16_20.copyWith(
-                              fontFamily: CustomStylesTheme.fontFamilyFranklin),
-                        ),
-                      ],
-                    ),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Text(
-                          'Planeta: ',
-                          style: CustomStylesTheme.titleXS16_20_semibold,
-                        ),
-                        const SizedBox(
-                          height: 2,
-                        ),
-                        Text(
-                          '${starWarsCharacter.homeWorld!.name}',
-                          style: CustomStylesTheme.titleXS16_20.copyWith(
-                              fontFamily: CustomStylesTheme.fontFamilyFranklin),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Text(
-                          'Color de ojo: ',
-                          style: CustomStylesTheme.titleXS16_20_semibold,
-                        ),
-                        const SizedBox(
-                          height: 2,
-                        ),
-                        Text(
-                          '${starWarsCharacter.character!.eyeColor}',
-                          style: CustomStylesTheme.titleXS16_20.copyWith(
-                              fontFamily: CustomStylesTheme.fontFamilyFranklin),
-                        ),
-                      ],
-                    ),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Text(
-                          'Color de pelo: ',
-                          style: CustomStylesTheme.titleXS16_20_semibold,
-                        ),
-                        const SizedBox(
-                          height: 2,
-                        ),
-                        Text(
-                          '${starWarsCharacter.character!.hairColor}',
-                          style: CustomStylesTheme.titleXS16_20.copyWith(
-                              fontFamily: CustomStylesTheme.fontFamilyFranklin),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(
-            height: 10,
-          ),
-          const Divider(
-            height: 1.5,
-            color: CustomStylesTheme.primaryColor,
-          ),
-          const SizedBox(
-            height: 5,
-          ),
-          const Text(
-            'Vehículos: ',
-            style: CustomStylesTheme.titleXS16_20_semibold,
-          ),
-          const SizedBox(
-            height: 2,
-          ),
-          if (starWarsCharacter.vehicles!.isNotEmpty)
-            ...starWarsCharacter.vehicles!.map(
-              (item) => Text(
-                '- ${item.name}',
-                style: CustomStylesTheme.titleXS16_20
-                    .copyWith(fontFamily: CustomStylesTheme.fontFamilyFranklin),
-              ),
-            )
-          else
-            Text(
-              'Sin Vehículos',
-              style: CustomStylesTheme.titleXS16_20
-                  .copyWith(fontFamily: CustomStylesTheme.fontFamilyFranklin),
-            ),
-          const SizedBox(
-            height: 10,
-          ),
-          const Divider(
-            height: 1.5,
-            color: CustomStylesTheme.primaryColor,
-          ),
-          const SizedBox(
-            height: 5,
-          ),
-          const Text(
-            'Naves: ',
-            style: CustomStylesTheme.titleXS16_20_semibold,
-          ),
-          const SizedBox(
-            height: 2,
-          ),
-          if (starWarsCharacter.starShips!.isNotEmpty)
-            ...starWarsCharacter.starShips!.map(
-              (item) => Text(
-                '- ${item.name}',
-                style: CustomStylesTheme.titleXS16_20
-                    .copyWith(fontFamily: CustomStylesTheme.fontFamilyFranklin),
-              ),
-            )
-          else
-            Text(
-              'Sin naves',
-              style: CustomStylesTheme.titleXS16_20
-                  .copyWith(fontFamily: CustomStylesTheme.fontFamilyFranklin),
-            ),
-        ],
       ),
     );
   }

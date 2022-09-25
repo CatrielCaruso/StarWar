@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 
-import 'package:star_wars/models/models.dart';
+import 'package:star_wars/models/person.model.dart';
 import 'package:star_wars/themes/themes.themes.dart';
+import 'package:star_wars/widgets/widgets.dart';
 
 class HomeScreenPersonItemWidget extends StatelessWidget {
   final PersonModel person;
@@ -24,85 +25,19 @@ class HomeScreenPersonItemWidget extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
           Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Text(
-                      'Nombre: ',
-                      style: CustomStylesTheme.titleXS16_20_semibold,
-                    ),
-                    const SizedBox(
-                      height: 2,
-                    ),
-                    Text(
-                      '${person.name}',
-                      style: CustomStylesTheme.titleXS16_20.copyWith(
-                          fontFamily: CustomStylesTheme.fontFamilyFranklin),
-                    ),
-                  ],
-                ),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Text(
-                      'Altura: ',
-                      style: CustomStylesTheme.titleXS16_20_semibold,
-                    ),
-                    const SizedBox(
-                      height: 2,
-                    ),
-                    Text(
-                      '${person.height}',
-                      style: CustomStylesTheme.titleXS16_20.copyWith(
-                          fontFamily: CustomStylesTheme.fontFamilyFranklin),
-                    ),
-                  ],
-                ),
-              ],
+            child: DetailsCharacterColumnWidget(
+              primaryTitle: 'Nombre',
+              primaryText: person.name!,
+              secondaryTitle: 'Altura',
+              secondartyText: person.height!,
             ),
           ),
           Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Text(
-                      'Peso: ',
-                      style: CustomStylesTheme.titleXS16_20_semibold,
-                    ),
-                    const SizedBox(
-                      height: 2,
-                    ),
-                    Text(
-                      '${person.mass}',
-                      style: CustomStylesTheme.titleXS16_20.copyWith(
-                          fontFamily: CustomStylesTheme.fontFamilyFranklin),
-                    ),
-                  ],
-                ),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Text(
-                      'Sexo: ',
-                      style: CustomStylesTheme.titleXS16_20_semibold,
-                    ),
-                    const SizedBox(
-                      height: 2,
-                    ),
-                    Text(
-                      '${person.gender}',
-                      style: CustomStylesTheme.titleXS16_20.copyWith(
-                          fontFamily: CustomStylesTheme.fontFamilyFranklin),
-                    ),
-                  ],
-                ),
-              ],
+            child: DetailsCharacterColumnWidget(
+              primaryTitle: 'Peso',
+              primaryText: person.mass!,
+              secondaryTitle: 'Sexo',
+              secondartyText: person.gender!,
             ),
           ),
         ],
