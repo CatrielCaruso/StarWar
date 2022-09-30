@@ -98,6 +98,24 @@ class StarWarsProvider with ChangeNotifier, DioClient {
     }
   }
 
+  /// Función para realizar el avistamiento
+  Future<void> postSighting({required PersonModel character}) async {
+    final Map<String, dynamic> dataPost = {
+      'userId': character.userId,
+      'dataTime': DateTime.now().toString(),
+      'character_name': character.name
+    };
+    try {
+      await dio.post(
+          'https://jsonplaceholder.typicode.com/posts',
+          data: jsonEncode(dataPost));
+
+      notifyListeners();
+    } catch (e) {
+      rethrow;
+    }
+  }
+
   /// Esta función se utiliza para incremetar la
   /// página a la hora de hacer peticiones para traer a
   /// las personas. (Porque esta páginado)
@@ -109,6 +127,12 @@ class StarWarsProvider with ChangeNotifier, DioClient {
 
   List<PersonModel> get persons {
     _persons = [..._auxPersons, ...people!.persons];
+
+    /// En este punto le asigno un valor al id del personaje
+    /// para enviar al post del avistamieto.
+    for (var i = 0; i < _persons.length; i++) {
+      _persons[i].userId = 1 + i;
+    }
     return _persons;
   }
 

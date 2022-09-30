@@ -11,7 +11,7 @@ class PersonModel {
     this.vehicles,
     this.starships,
   });
-
+  int? userId;
   final String? name;
   final String? height;
   final String? mass;

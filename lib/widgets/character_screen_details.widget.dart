@@ -1,7 +1,13 @@
 import 'package:flutter/material.dart';
 
+import 'package:loader_overlay/loader_overlay.dart';
+import 'package:provider/provider.dart';
+
 import 'package:star_wars/models/star_wars_character.dart';
+import 'package:star_wars/providers/star_wars.provider.dart';
+import 'package:star_wars/screens/message_error.screen.dart';
 import 'package:star_wars/themes/themes.themes.dart';
+import 'package:star_wars/widgets/loader_text.widget.dart';
 import 'package:star_wars/widgets/shared/details_character_column.widget.dart';
 
 class CharacterScreenDetailsWidget extends StatelessWidget {
@@ -10,6 +16,42 @@ class CharacterScreenDetailsWidget extends StatelessWidget {
     super.key,
     required this.starWarsCharacter,
   });
+
+  Future<void> _onSighting({required BuildContext context}) async {
+    try {
+      context.loaderOverlay.show(
+        widget: const LoadingTextWidget(title: 'Enviando...'),
+      );
+      await context
+          .read<StarWarsProvider>()
+          .postSighting(character: starWarsCharacter.character!);
+      context.loaderOverlay.hide();
+
+      // ignore: use_build_context_synchronously
+      _showDialog(context);
+    } catch (e) {
+      Navigator.pushNamed(context, MessageErrorScreen.routeName);
+    }
+  }
+
+  void _showDialog(BuildContext context) {
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: const Text("Avistamiento realizado con exito."),
+            actions: <Widget>[
+              ElevatedButton(
+                child: const Text("Volver"),
+                onPressed: () {
+                  //Navigator.pushNamed(context, "/screen1");
+                  Navigator.pop(context);
+                },
+              ),
+            ],
+          );
+        });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -112,7 +154,7 @@ class CharacterScreenDetailsWidget extends StatelessWidget {
           ),
           Center(
             child: ElevatedButton(
-              onPressed: () {},
+              onPressed: () => _onSighting(context: context),
               style: ButtonStyle(
                 shape: MaterialStateProperty.all(
                   const CircleBorder(

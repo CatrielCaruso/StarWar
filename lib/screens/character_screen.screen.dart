@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 
 import 'package:star_wars/providers/star_wars.provider.dart';
 import 'package:star_wars/models/models.dart';
+import 'package:star_wars/screens/message_error.screen.dart';
 import 'package:star_wars/themes/themes.themes.dart';
 import 'package:star_wars/widgets/widgets.dart';
 
@@ -53,7 +54,11 @@ class _CharacterScreenState extends State<CharacterScreen> {
       setState(() {
         finishedFetch = true;
       });
-    } catch (e) {}
+    } catch (e) {
+
+       Navigator.pushNamed(context, MessageErrorScreen.routeName);
+
+    }
   }
 
   /// Esta función arma todas las llamdas a la api
@@ -87,7 +92,7 @@ class _CharacterScreenState extends State<CharacterScreen> {
           centerTitle: true,
           actions: [
             IconButton(
-              icon: Icon(Icons.arrow_drop_down_circle_outlined),
+              icon:const Icon(Icons.arrow_drop_down_circle_outlined),
               onPressed: () => Navigator.pop(context),
             )
           ],
