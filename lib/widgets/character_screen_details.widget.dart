@@ -30,7 +30,24 @@ class CharacterScreenDetailsWidget extends StatelessWidget {
       // ignore: use_build_context_synchronously
       _showDialog(context);
     } catch (e) {
-      Navigator.pushNamed(context, MessageErrorScreen.routeName);
+      context.loaderOverlay.hide();
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => MessageErrorScreen(
+            buttonNavigator: () {
+              Navigator.pop(context);
+              Navigator.pop(context);
+              Navigator.pop(context);
+            },
+            willPopScopeNavigator: () {
+              Navigator.pop(context);
+              Navigator.pop(context);
+              Navigator.pop(context);
+            },
+          ),
+        ),
+      );
     }
   }
 

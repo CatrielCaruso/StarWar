@@ -23,7 +23,8 @@ class OutlineButtonWidget extends StatelessWidget {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(48),
           ),
-          shadowColor: Colors.transparent,
+          // shadowColor: Colors.transparent,
+          backgroundColor: CustomStylesTheme.lightGreen500Color,
 
           textStyle: CustomStylesTheme.bodyM16_26_medium
               .copyWith(fontFamily: CustomStylesTheme.fontFamilyFranklin),
@@ -33,7 +34,7 @@ class OutlineButtonWidget extends StatelessWidget {
         child: Text(
           text,
           style: const TextStyle(
-            color: CustomStylesTheme.green900Color,
+            color: CustomStylesTheme.whiteColor,
           ),
           textAlign: TextAlign.center,
         ),

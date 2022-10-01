@@ -51,7 +51,7 @@ class StarWarsProvider with ChangeNotifier, DioClient {
   Future<void> getStarShip({required String pathStarShip}) async {
     try {
       final Response<String> response = await dio.get(
-        pathStarShip,
+        pathStarShip + 'hhh',
       );
 
       _starShips.add(
@@ -106,8 +106,7 @@ class StarWarsProvider with ChangeNotifier, DioClient {
       'character_name': character.name
     };
     try {
-      await dio.post(
-          'https://jsonplaceholder.typicode.com/posts',
+      await dio.post('https://jsonplaceholder.typicode.com/posts gggg',
           data: jsonEncode(dataPost));
 
       notifyListeners();

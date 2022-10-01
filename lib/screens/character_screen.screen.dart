@@ -55,9 +55,16 @@ class _CharacterScreenState extends State<CharacterScreen> {
         finishedFetch = true;
       });
     } catch (e) {
-
-       Navigator.pushNamed(context, MessageErrorScreen.routeName);
-
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => MessageErrorScreen(
+            buttonNavigator: () =>
+                {Navigator.pop(context), Navigator.pop(context)},
+            willPopScopeNavigator: () => Navigator.pop(context),
+          ),
+        ),
+      );
     }
   }
 
@@ -92,7 +99,7 @@ class _CharacterScreenState extends State<CharacterScreen> {
           centerTitle: true,
           actions: [
             IconButton(
-              icon:const Icon(Icons.arrow_drop_down_circle_outlined),
+              icon: const Icon(Icons.arrow_drop_down_circle_outlined),
               onPressed: () => Navigator.pop(context),
             )
           ],
