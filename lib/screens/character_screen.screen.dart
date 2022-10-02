@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 
 import 'package:provider/provider.dart';
 
-import 'package:star_wars/providers/star_wars.provider.dart';
 import 'package:star_wars/models/models.dart';
-import 'package:star_wars/screens/message_error.screen.dart';
+import 'package:star_wars/providers/star_wars.provider.dart';
+import 'package:star_wars/themes/message.themes.dart';
 import 'package:star_wars/themes/themes.themes.dart';
 import 'package:star_wars/widgets/widgets.dart';
 
@@ -36,16 +36,18 @@ class _CharacterScreenState extends State<CharacterScreen> {
 
       /// Paths para traer los objetos de las naves del personaje.
       if (widget.person.hasStarShip) {
-        await addPathsTransport(paths: widget.person.starships!);
+        await addPaths(paths: widget.person.starships!);
       }
 
       /// Paths para traer los objetos de los vehículos del personaje.
       if (widget.person.hasVehicles) {
-        await addPathsTransport(paths: widget.person.vehicles!);
+        await addPaths(paths: widget.person.vehicles!);
       }
 
       /// Path para traer el planeta del personaje
-      await addPathHomeWord(pathHomeWorld: widget.person.homeworld!);
+      if (widget.person.hasHomeWord) {
+        await addPaths(path: widget.person.homeworld!);
+      }
 
       /// En este punto creo el objeto con toda la
       /// información que necesito para mostrar en esta segunda pantalla
@@ -55,33 +57,35 @@ class _CharacterScreenState extends State<CharacterScreen> {
         finishedFetch = true;
       });
     } catch (e) {
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => MessageErrorScreen(
-            buttonNavigator: () =>
-                {Navigator.pop(context), Navigator.pop(context)},
-            willPopScopeNavigator: () => Navigator.pop(context),
-          ),
-        ),
+      MessageTheme.buildMessage(
+        context: context,
+        buttonNavigator: () {
+          Navigator.pop(context);
+          Navigator.pop(context);
+        },
+        willPopScopeNavigator: () {
+          Navigator.pop(context);
+          Navigator.pop(context);
+        },
       );
     }
   }
 
   /// Esta función arma todas las llamdas a la api
   /// para ser ejecutada en el siguiete paso del programa.
-  Future<void> addPathsTransport({required List<String> paths}) async {
-    for (String path in paths) {
+  Future<void> addPaths({List<String>? paths, String? path}) async {
+    if (path != null) {
+      await providerRead.getHomeWorld(pathHomeWorld: path);
+      return;
+    }
+
+    for (String path in paths!) {
       if (path.contains('starships')) {
         await providerRead.getStarShip(pathStarShip: path);
       } else {
         await providerRead.getVehicle(pathVehicle: path);
       }
     }
-  }
-
-  Future<void> addPathHomeWord({required String pathHomeWorld}) async {
-    await providerRead.getHomeWorld(pathHomeWorld: pathHomeWorld);
   }
 
   @override
@@ -99,7 +103,7 @@ class _CharacterScreenState extends State<CharacterScreen> {
           centerTitle: true,
           actions: [
             IconButton(
-              icon: const Icon(Icons.arrow_drop_down_circle_outlined),
+              icon: const Icon(Icons.arrow_circle_up_sharp),
               onPressed: () => Navigator.pop(context),
             )
           ],

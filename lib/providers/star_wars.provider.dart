@@ -12,6 +12,8 @@ import 'package:star_wars/models/models.dart';
 /// Las variables [_starShips] y [_vehicles] contiene los vehículos y naves DE UN SOLO PERSONAJE.
 /// La variable entera [_page] indica la página que se le pide a la api que devulva cuándo se
 /// buscan los personajes.
+/// La variable [_onSwitch] se utiliza para habilitar o deshabilitar el switch
+/// para realizar el avistamiento.
 
 class StarWarsProvider with ChangeNotifier, DioClient {
   PeopleModel? _people;
@@ -24,6 +26,7 @@ class StarWarsProvider with ChangeNotifier, DioClient {
   StarWarsCharacter? _starWarsCharacter;
   HomeWorldModel? _homeWorldModel;
   int _page = 1;
+  bool _onSwitch = false;
 
   /// Función para traer los pesonajes de starWars
   Future<void> getPeople() async {
@@ -39,6 +42,8 @@ class StarWarsProvider with ChangeNotifier, DioClient {
       _people = PeopleModel.fromJson(responseData);
 
       /// Guardo en la lista aux [_auxPersons] los valores actuales de la lista [_person].
+      /// Al inicio será vacío, pero despúes con cada push traera valores y se
+      /// iran guandando en [_auxPersons].
       _auxPersons = _persons;
 
       notifyListeners();
@@ -51,7 +56,7 @@ class StarWarsProvider with ChangeNotifier, DioClient {
   Future<void> getStarShip({required String pathStarShip}) async {
     try {
       final Response<String> response = await dio.get(
-        pathStarShip + 'hhh',
+        pathStarShip,
       );
 
       _starShips.add(
@@ -106,7 +111,7 @@ class StarWarsProvider with ChangeNotifier, DioClient {
       'character_name': character.name
     };
     try {
-      await dio.post('https://jsonplaceholder.typicode.com/posts gggg',
+      await dio.post('https://jsonplaceholder.typicode.com/posts',
           data: jsonEncode(dataPost));
 
       notifyListeners();
@@ -139,6 +144,7 @@ class StarWarsProvider with ChangeNotifier, DioClient {
     return _people;
   }
 
+  /// Función para limpiar los array del estado.
   void clearArray() {
     _starShips = [];
     _vehicles = [];
@@ -167,6 +173,15 @@ class StarWarsProvider with ChangeNotifier, DioClient {
   HomeWorldModel? get homeWorldModel => _homeWorldModel;
   set homeWorldModel(HomeWorldModel? value) {
     _homeWorldModel = value;
+    notifyListeners();
+  }
+
+  bool get onSwitch {
+    return _onSwitch;
+  }
+
+  set onSwitch(bool value) {
+    _onSwitch = value;
     notifyListeners();
   }
 }

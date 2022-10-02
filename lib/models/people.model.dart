@@ -1,6 +1,5 @@
 import 'package:star_wars/models/models.dart';
 
-
 class PeopleModel {
   PeopleModel({
     required this.count,
@@ -24,6 +23,7 @@ class PeopleModel {
           ),
         ),
       );
+  bool get hasPersons {
+    return next != null;
+  }
 }
-
-

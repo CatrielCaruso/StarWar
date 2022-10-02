@@ -19,10 +19,18 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  /// Declaramos los providers
   late final StarWarsProvider providerRead = context.read<StarWarsProvider>();
   late final StarWarsProvider providerWatch = context.watch<StarWarsProvider>();
+
+  /// Declaramos el controlador para el componente [SmartRefresher]
   late final RefreshController _refreshController =
       RefreshController(initialRefresh: false);
+
+  /// Declaramos la variable bool [loading] para poner en espera mostrando un loanding cuando
+  /// se hace la petición de la información en la api.
+  /// Declaramos la variable bool [initFetchError] para saber si hubo error al
+  /// hacer la petición a la api.
   bool loading = false;
   bool initFetchError = false;
   @override
@@ -32,7 +40,7 @@ class _HomeScreenState extends State<HomeScreen> {
     super.initState();
   }
 
-  /// Función inicial para traer la información inicial.(Los primeros personajes).
+  /// Función inicial para traer la información inicial.(Los primeros personajes, porque viene paginado).
   Future<void> _initFetch() async {
     try {
       setState(() {
@@ -61,8 +69,24 @@ class _HomeScreenState extends State<HomeScreen> {
       if (mounted) setState(() {});
       _refreshController.loadComplete();
     } catch (e) {
-      Navigator.pushNamed(context, MessageErrorScreen.routeName);
+      Navigator.pushNamed(
+        context,
+        MessageErrorScreen.routeName,
+      );
     }
+  }
+
+  void _onShowCaracter({required int index}) {
+    /// Limpiamos los array del estado
+    providerRead.clearArray();
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => CharacterScreen(
+          person: context.watch<StarWarsProvider>().persons[index],
+        ),
+      ),
+    );
   }
 
   @override
@@ -70,8 +94,6 @@ class _HomeScreenState extends State<HomeScreen> {
     _refreshController.dispose();
     super.dispose();
   }
-
-  bool status5 = false;
 
   @override
   Widget build(BuildContext context) {
@@ -97,12 +119,12 @@ class _HomeScreenState extends State<HomeScreen> {
                         Expanded(
                           child: SmartRefresher(
                             physics: const BouncingScrollPhysics(),
-                            enablePullUp: (providerWatch.people!.next != null)
+                            enablePullUp: (providerWatch.people!.hasPersons)
                                 ? true
                                 : false,
                             enablePullDown: false,
                             controller: _refreshController,
-                            onLoading: (providerWatch.people!.next != null)
+                            onLoading: (providerWatch.people!.hasPersons)
                                 ? _onLoading
                                 : null,
                             footer: const ClassicFooter(
@@ -118,20 +140,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                   .persons
                                   .length,
                               itemBuilder: ((context, index) => GestureDetector(
-                                    onTap: () {
-                                      /// Limpiamos los array del estado
-                                      providerRead.clearArray();
-                                      Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                          builder: (context) => CharacterScreen(
-                                            person: context
-                                                .watch<StarWarsProvider>()
-                                                .persons[index],
-                                          ),
-                                        ),
-                                      );
-                                    },
+                                    onTap: () => _onShowCaracter(index: index),
                                     child: HomeScreenPersonItemWidget(
                                       person: context
                                           .watch<StarWarsProvider>()
@@ -160,6 +169,8 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 }
 
+/// Este widgets se dispara cuando hay un error al
+/// traer los datos por primera vez.(Al abrir la app).
 class _InitFechErrorMessageWidget extends StatelessWidget {
   final VoidCallback _initFetch;
   const _InitFechErrorMessageWidget({

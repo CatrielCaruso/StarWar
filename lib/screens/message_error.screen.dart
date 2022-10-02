@@ -1,26 +1,29 @@
 import 'package:flutter/material.dart';
+import 'package:star_wars/models/models.dart';
 
 import 'package:star_wars/themes/themes.themes.dart';
 import 'package:star_wars/widgets/widgets.dart';
 
 class MessageErrorScreen extends StatelessWidget {
   static String routeName = 'messageErrorScreen';
-  final VoidCallback? buttonNavigator;
-  final VoidCallback? willPopScopeNavigator;
-  const MessageErrorScreen(
-      {super.key, this.buttonNavigator, this.willPopScopeNavigator});
+
+  const MessageErrorScreen({
+    super.key,
+  });
 
   Future<bool> _onBack(
       {required BuildContext context, VoidCallback? navigator}) async {
-    navigator!;
+    navigator?.call();
     return true;
   }
 
   @override
   Widget build(BuildContext context) {
+    final MessageModel message =
+        ModalRoute.of(context)!.settings.arguments as MessageModel;
     return WillPopScope(
       onWillPop: () =>
-          _onBack(context: context, navigator: willPopScopeNavigator),
+          _onBack(context: context, navigator: message.willPopScopeNavigator),
       child: Scaffold(
         body: Container(
           padding: const EdgeInsets.only(right: 24, left: 24, bottom: 24),
@@ -56,7 +59,7 @@ class MessageErrorScreen extends StatelessWidget {
               ),
               OutlineButtonWidget(
                 text: 'Aceptar',
-                submitFunction: buttonNavigator!,
+                submitFunction: message.buttonNavigator,
               ),
             ],
           ),

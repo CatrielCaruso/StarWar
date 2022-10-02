@@ -5,7 +5,8 @@ import 'package:provider/provider.dart';
 
 import 'package:star_wars/models/star_wars_character.dart';
 import 'package:star_wars/providers/star_wars.provider.dart';
-import 'package:star_wars/screens/message_error.screen.dart';
+import 'package:star_wars/screens/home_screen.screen.dart';
+import 'package:star_wars/themes/message.themes.dart';
 import 'package:star_wars/themes/themes.themes.dart';
 import 'package:star_wars/widgets/loader_text.widget.dart';
 import 'package:star_wars/widgets/shared/details_character_column.widget.dart';
@@ -31,28 +32,18 @@ class CharacterScreenDetailsWidget extends StatelessWidget {
       _showDialog(context);
     } catch (e) {
       context.loaderOverlay.hide();
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => MessageErrorScreen(
-            buttonNavigator: () {
-              Navigator.pop(context);
-              Navigator.pop(context);
-              Navigator.pop(context);
-            },
-            willPopScopeNavigator: () {
-              Navigator.pop(context);
-              Navigator.pop(context);
-              Navigator.pop(context);
-            },
-          ),
-        ),
+
+      MessageTheme.buildMessage(
+        context: context,
+        buttonNavigator: () => Navigator.pop(context),
+        willPopScopeNavigator: () => Navigator.pop(context),
       );
     }
   }
 
   void _showDialog(BuildContext context) {
     showDialog(
+        barrierDismissible: false,
         context: context,
         builder: (BuildContext context) {
           return AlertDialog(
@@ -60,10 +51,11 @@ class CharacterScreenDetailsWidget extends StatelessWidget {
             actions: <Widget>[
               ElevatedButton(
                 child: const Text("Volver"),
-                onPressed: () {
-                  //Navigator.pushNamed(context, "/screen1");
-                  Navigator.pop(context);
-                },
+                onPressed: () => Navigator.pushAndRemoveUntil(
+                  context,
+                  MaterialPageRoute(builder: (context) => const HomeScreen()),
+                  (Route<dynamic> route) => false,
+                ),
               ),
             ],
           );
@@ -169,33 +161,39 @@ class CharacterScreenDetailsWidget extends StatelessWidget {
           const SizedBox(
             height: 30,
           ),
-          Center(
-            child: ElevatedButton(
-              onPressed: () => _onSighting(context: context),
-              style: ButtonStyle(
-                shape: MaterialStateProperty.all(
-                  const CircleBorder(
-                    side: BorderSide(
-                      width: 5,
-                      color: Colors.white,
-                      style: BorderStyle.solid,
+          AbsorbPointer(
+            absorbing: !context.watch<StarWarsProvider>().onSwitch,
+            child: Center(
+              child: ElevatedButton(
+                onPressed: () => _onSighting(context: context),
+                style: ButtonStyle(
+                  shape: MaterialStateProperty.all(
+                    const CircleBorder(
+                      side: BorderSide(
+                        width: 5,
+                        color: Colors.white,
+                        style: BorderStyle.solid,
+                      ),
                     ),
                   ),
+                  padding: MaterialStateProperty.all(const EdgeInsets.all(30)),
+                  backgroundColor: MaterialStateProperty.all(
+                    (!context.watch<StarWarsProvider>().onSwitch)
+                        ? CustomStylesTheme.gray800Color
+                        : CustomStylesTheme.red1Color,
+                  ), // <-- Button color
+                  overlayColor:
+                      MaterialStateProperty.resolveWith<Color?>((states) {
+                    if (!states.contains(MaterialState.pressed)) {
+                      return null;
+                    }
+                    return CustomStylesTheme.blueLightColor;
+                  }),
                 ),
-                padding: MaterialStateProperty.all(const EdgeInsets.all(30)),
-                backgroundColor: MaterialStateProperty.all(
-                    CustomStylesTheme.red1Color), // <-- Button color
-                overlayColor:
-                    MaterialStateProperty.resolveWith<Color?>((states) {
-                  if (!states.contains(MaterialState.pressed)) {
-                    return null;
-                  }
-                  return CustomStylesTheme.blueLightColor;
-                }),
-              ),
-              child: const Text(
-                'Avisar',
-                style: CustomStylesTheme.titleXS16_20_semibold,
+                child: const Text(
+                  'Avisar',
+                  style: CustomStylesTheme.titleXS16_20_semibold,
+                ),
               ),
             ),
           ),

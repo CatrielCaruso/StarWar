@@ -46,4 +46,8 @@ class PersonModel {
   bool get hasVehicles {
     return vehicles!.isNotEmpty;
   }
+
+  bool get hasHomeWord {
+    return homeworld != null;
+  }
 }
